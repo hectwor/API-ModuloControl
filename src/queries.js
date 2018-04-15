@@ -3,17 +3,19 @@ let cn = require('../src/dbconnection');
 let db = cn.connection;
 
 const indice_name = 'alumno.ape_nom';
+const indice_name_invertido = 'alumno.nom_ape';
 const indice_concepto = 'concepto.concepto';
-const indice_voucher = 'numero_voucher';
+const indice_voucher = 'numero';
 const indice_fecha = 'fecha';
 const indice_recaudacion = 'id_rec';
-const indice_flag = 'flag_pago';
+const indice_flag = 'validado';
+const indice_dni = 'alumno.dni';
 const indice_obs = 'observacion';
 
 function SelectQuery(req, res, next, whereIN){
     let where = "WHERE "+whereIN;
     if (whereIN === "") where = "";
-    db.any("SELECT *, alumno.codigo as Codigo, alumno.ape_nom as Nombre, concepto.concepto as Concepto " +
+    db.any("SELECT *, alumno.codigo as Codigo, alumno.ape_nom as Nombre, alumno.dni as DNI, concepto.concepto as Concepto " +
         "from recaudaciones " +
         "INNER JOIN alumno ON recaudaciones.id_alum = alumno.id_alum " +
         "JOIN concepto ON recaudaciones.id_concepto = concepto.id_concepto " +
@@ -84,10 +86,12 @@ function getComplet (req, res, next) {
     let Listvoucher = jsonR.voucher;
     let IPeriod = "'"+jsonR.periodoI+"'";
     let FPeriod = "'"+jsonR.periodoF+"'";
+    let ListDNI = jsonR.dni;
     let hoy = new Date();
     if (ListNames === "") ListNames = null;
     if (ListConcepts === "") ListConcepts = null;
     if (Listvoucher === "") Listvoucher = null;
+    if (ListDNI === "") ListDNI = null;
     if (jsonR.periodoI === null ||jsonR.periodoI === "") IPeriod = "'0001-01-01'";
     if (jsonR.periodoF === null ||jsonR.periodoF === "") FPeriod = "'"+hoy.getFullYear()+'-'+hoy.getMonth()+'-'+hoy.getDate()+"'";
     const whereperiod = "("+indice_fecha+" < "+FPeriod+" AND " + indice_fecha + " >= "+ IPeriod +")";
@@ -95,7 +99,8 @@ function getComplet (req, res, next) {
     let where = where_construct(ListNames, indice_name)+" AND "
         +whereperiod+" AND "
         +where_construct(Listvoucher, indice_voucher)+" AND "
-        +where_construct(ListConcepts, indice_concepto);
+        +where_construct(ListConcepts, indice_concepto)+" AND "
+        +where_construct(ListDNI,indice_dni);
 
     SelectQuery(req, res, next, where);
 }
