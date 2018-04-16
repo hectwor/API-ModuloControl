@@ -11,10 +11,16 @@ const indice_recaudacion = 'id_rec';
 const indice_flag = 'validado';
 const indice_dni = 'alumno.dni';
 const indice_obs = 'observacion';
+const indice_codigo = 'alumno.codigo';
 
 function SelectQuery(req, res, next, whereIN){
     let where = "WHERE "+whereIN;
     if (whereIN === "") where = "";
+    console.log("SELECT *, alumno.codigo as Codigo, alumno.ape_nom as Nombre, alumno.dni as DNI, concepto.concepto as Concepto " +
+        "from recaudaciones " +
+        "INNER JOIN alumno ON recaudaciones.id_alum = alumno.id_alum " +
+        "JOIN concepto ON recaudaciones.id_concepto = concepto.id_concepto " +
+        where);
     db.any("SELECT *, alumno.codigo as Codigo, alumno.ape_nom as Nombre, alumno.dni as DNI, concepto.concepto as Concepto " +
         "from recaudaciones " +
         "INNER JOIN alumno ON recaudaciones.id_alum = alumno.id_alum " +
@@ -67,11 +73,11 @@ function where_construct(ListValor, indice){
     let where = "";
     if (ListValor != null) {
         let valor = ListValor.split(',');
-        for(let i=0;i<valor.length;i++){
-            where= where+indice+" = '"+ valor[i] + "' OR ";
-        }
-        where = where.slice(0,-4);
-        where = "("+where+")";
+        let valorcomillas="";
+        for(let i=0;i<valor.length;i++)
+            valorcomillas=valorcomillas+"'"+valor[i]+"',";
+        valorcomillas = valorcomillas.slice(0,-1);
+        where = indice+" IN ("+valorcomillas+")";
     }else
         where = 'true';
     return where;
@@ -100,7 +106,7 @@ function getComplet (req, res, next) {
         +whereperiod+" AND "
         +where_construct(Listvoucher, indice_voucher)+" AND "
         +where_construct(ListConcepts, indice_concepto)+" AND "
-        +where_construct(ListDNI,indice_dni);
+        +"("+where_construct(ListDNI,indice_dni)+" OR "+where_construct(ListDNI, indice_codigo)+")";
 
     SelectQuery(req, res, next, where);
 }
