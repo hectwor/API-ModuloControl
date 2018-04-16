@@ -16,11 +16,6 @@ const indice_codigo = 'alumno.codigo';
 function SelectQuery(req, res, next, whereIN){
     let where = "WHERE "+whereIN;
     if (whereIN === "") where = "";
-    console.log("SELECT *, alumno.codigo as Codigo, alumno.ape_nom as Nombre, alumno.dni as DNI, concepto.concepto as Concepto " +
-        "from recaudaciones " +
-        "INNER JOIN alumno ON recaudaciones.id_alum = alumno.id_alum " +
-        "JOIN concepto ON recaudaciones.id_concepto = concepto.id_concepto " +
-        where);
     db.any("SELECT *, alumno.codigo as Codigo, alumno.ape_nom as Nombre, alumno.dni as DNI, concepto.concepto as Concepto " +
         "from recaudaciones " +
         "INNER JOIN alumno ON recaudaciones.id_alum = alumno.id_alum " +
@@ -39,9 +34,9 @@ function SelectQuery(req, res, next, whereIN){
         })
 }
 function UpdateQuery(req, res, next, indiceSet, when1, when2, indices) {
-    db.any("UPDATE recaudaciones SET "+indice_flag+"= CASE "+indice_recaudacion+" "+when1+
-        ","+indice_obs+" = CASE "+indice_recaudacion+" "+when2+
-        " WHERE "+indice_recaudacion+" IN ("+indices+")")
+    db.any(`UPDATE recaudaciones SET ${indice_flag} = CASE ${indice_recaudacion} 
+        ${when1}, ${indice_obs} = CASE ${indice_recaudacion} ${when2}
+         WHERE ${indice_recaudacion} IN (${indices})`)
         .then(function(data){
             res.status(200)
                 .json({
@@ -64,7 +59,7 @@ function when_construct(ListIndices, ListValor) {
             when = when + "WHEN "+indices[i]+" THEN "+v[0]+" ";
             when2 = when2 + "WHEN "+indices[i]+" THEN '"+v[1]+"' ";
         }
-        when = when+" END";when2 = when2+" END";
+        when = when+"END";when2 = when2+"END";
         when = [when, when2];
     }
     return when;
@@ -73,6 +68,21 @@ function where_construct(ListValor, indice){
     let where = "";
     if (ListValor != null) {
         let valor = ListValor.split(',');
+        for(let i=0;i<valor.length;i++) valor[i]=valor[i].trim();
+        if (indice===indice_name){
+            let tam= valor.length;
+            for (let i=0;i<tam;i++){
+                let noms = valor[i].split(' ');
+                switch (noms.length) {
+                    case 2 : valor.push(`${noms[1]} ${noms[0]}`);
+                    break;
+                    case 3 : valor.push(`${noms[1]} ${noms[2]} ${noms[0]}`);
+                    break;
+                    case 4 : valor.push(`${noms[2]} ${noms[3]} ${noms[0]} ${noms[1]}`);
+                }
+            }
+            console.log(valor);
+        }
         let valorcomillas="";
         for(let i=0;i<valor.length;i++)
             valorcomillas=valorcomillas+"'"+valor[i]+"',";
@@ -121,8 +131,6 @@ function validate(req, res, next){
         }
     }
     indices = indices.slice(1); valores = valores.slice(1);
-    console.log(indices);
-    console.log(valores);
     if (indices != null && valores!=null) {
         let v = when_construct(indices, valores);
         UpdateQuery(req,res,next,indice_flag,v[0] , v[1],indices);
