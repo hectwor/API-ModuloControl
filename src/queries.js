@@ -71,7 +71,6 @@ function when_construct(ListIndices, ListValor) {
 function where_construct(ListValor, indice){
     let where = "";
     if (ListValor != null) {
-        console.log("List :"+ListValor+" tipo : "+typeof (ListValor)+" indice : "+indice);
         let valor = ListValor.split(',');
         for(let i=0;i<valor.length;i++) valor[i]=valor[i].trim();
         if (indice===indice_name){
@@ -84,36 +83,24 @@ function where_construct(ListValor, indice){
                         where =indice+" SIMILAR TO '%"+noms[0]+"%'";
                         return where;
                     case 2 :
-                        if (noms[0] === noms[0].toLowerCase() ||
-                            noms[1] === noms[1].toLowerCase()){
-                            noms[0] =noms[0].toUpperCase();
-                            noms[1] =noms[1].toUpperCase();
-                            valor.push(noms[0]+" "+ noms[1]);
-                        }
-                        valor.push(noms[1]+" "+ noms[0]);
-                        break;
+                        noms[0] =noms[0].toUpperCase();
+                        noms[1] =noms[1].toUpperCase();
+                        where ="("+indice+" SIMILAR TO '%"+noms[0]+"%"+noms[1]+"%' OR " +indice+
+                            " SIMILAR TO '%"+noms[1]+"%"+noms[0]+"%')";
+                        return where;
                     case 3 :
-                        if (noms[0] === noms[0].toLowerCase() ||
-                            noms[1] === noms[1].toLowerCase() ||
-                            noms[2] === noms[2].toLowerCase()){
-                            noms[0] =noms[0].toUpperCase();
-                            noms[1] =noms[1].toUpperCase();
-                            noms[2] =noms[2].toUpperCase();
-                            valor.push(`${noms[0]} ${noms[1]} ${noms[2]}`);
-                        }
+                        noms[0] =noms[0].toUpperCase();
+                        noms[1] =noms[1].toUpperCase();
+                        noms[2] =noms[2].toUpperCase();
+                        valor.push(`${noms[0]} ${noms[1]} ${noms[2]}`);
                         valor.push(`${noms[1]} ${noms[2]} ${noms[0]}`);
                         break;
                     case 4 :
-                        if (noms[0] === noms[0].toLowerCase() ||
-                            noms[1] === noms[1].toLowerCase() ||
-                            noms[2] === noms[2].toLowerCase() ||
-                            noms[3] === noms[3].toLowerCase()){
-                            noms[0] =noms[0].toUpperCase();
-                            noms[1] =noms[1].toUpperCase();
-                            noms[2] =noms[2].toUpperCase();
-                            noms[3] =noms[3].toUpperCase();
-                            valor.push(`${noms[0]} ${noms[1]} ${noms[2]} ${noms[3]}`);
-                        }
+                        noms[0] =noms[0].toUpperCase();
+                        noms[1] =noms[1].toUpperCase();
+                        noms[2] =noms[2].toUpperCase();
+                        noms[3] =noms[3].toUpperCase();
+                        valor.push(`${noms[0]} ${noms[1]} ${noms[2]} ${noms[3]}`);
                         valor.push(`${noms[2]} ${noms[3]} ${noms[0]} ${noms[1]}`);
                 }
             }
@@ -133,6 +120,7 @@ function getAll(req, res, next){
 }
 function getComplet (req, res, next) {
     let jsonR = req.body;
+    let whereperiod;
     console.log(jsonR);
     let ListNames = jsonR.nombre;
     let ListConcepts = jsonR.id_concepto;
@@ -147,7 +135,10 @@ function getComplet (req, res, next) {
     if (ListDNI === "") ListDNI = null;
     if (jsonR.periodoI === null ||jsonR.periodoI === "") IPeriod = "'0001-01-01'";
     if (jsonR.periodoF === null ||jsonR.periodoF === "") FPeriod = "'"+hoy.getFullYear()+'-'+hoy.getMonth()+'-'+hoy.getDate()+"'";
-    const whereperiod = "("+indice_fecha+" < "+FPeriod+" AND " + indice_fecha + " >= "+ IPeriod +")";
+    if ((jsonR.periodoI === null ||jsonR.periodoI === "") && (jsonR.periodoF === null ||jsonR.periodoF === ""))
+        whereperiod='true';
+    else
+        whereperiod = "("+indice_fecha+" < "+FPeriod+" AND " + indice_fecha + " >= "+ IPeriod +")";
 
     let where = where_construct(ListNames, indice_name)+" AND "
         +whereperiod+" AND "
