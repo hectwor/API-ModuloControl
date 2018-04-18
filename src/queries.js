@@ -3,7 +3,6 @@ let cn = require('../src/dbconnection');
 let db = cn.connection;
 
 const indice_name = 'alumno.ape_nom';
-const indice_name_invertido = 'alumno.nom_ape';
 const indice_concepto = 'concepto.concepto';
 const indice_voucher = 'numero';
 const indice_fecha = 'fecha';
@@ -16,6 +15,11 @@ const indice_codigo = 'alumno.codigo';
 function SelectQuery(req, res, next, whereIN){
     let where = "WHERE "+whereIN;
     if (whereIN === "") where = "";
+    console.log("SELECT *, alumno.codigo as Codigo, alumno.ape_nom as Nombre, alumno.dni as DNI, concepto.concepto as Concepto " +
+        "from recaudaciones " +
+        "INNER JOIN alumno ON recaudaciones.id_alum = alumno.id_alum " +
+        "JOIN concepto ON recaudaciones.id_concepto = concepto.id_concepto " +
+        where);
     db.any("SELECT *, alumno.codigo as Codigo, alumno.ape_nom as Nombre, alumno.dni as DNI, concepto.concepto as Concepto " +
         "from recaudaciones " +
         "INNER JOIN alumno ON recaudaciones.id_alum = alumno.id_alum " +
@@ -67,6 +71,7 @@ function when_construct(ListIndices, ListValor) {
 function where_construct(ListValor, indice){
     let where = "";
     if (ListValor != null) {
+        console.log("List :"+ListValor+" tipo : "+typeof (ListValor)+" indice : "+indice);
         let valor = ListValor.split(',');
         for(let i=0;i<valor.length;i++) valor[i]=valor[i].trim();
         if (indice===indice_name){
@@ -74,11 +79,42 @@ function where_construct(ListValor, indice){
             for (let i=0;i<tam;i++){
                 let noms = valor[i].split(' ');
                 switch (noms.length) {
-                    case 2 : valor.push(`${noms[1]} ${noms[0]}`);
-                    break;
-                    case 3 : valor.push(`${noms[1]} ${noms[2]} ${noms[0]}`);
-                    break;
-                    case 4 : valor.push(`${noms[2]} ${noms[3]} ${noms[0]} ${noms[1]}`);
+                    case 1 :
+                        noms[0] =noms[0].toUpperCase();
+                        where =indice+" SIMILAR TO '%"+noms[0]+"%'";
+                        return where;
+                    case 2 :
+                        if (noms[0] === noms[0].toLowerCase() ||
+                            noms[1] === noms[1].toLowerCase()){
+                            noms[0] =noms[0].toUpperCase();
+                            noms[1] =noms[1].toUpperCase();
+                            valor.push(noms[0]+" "+ noms[1]);
+                        }
+                        valor.push(noms[1]+" "+ noms[0]);
+                        break;
+                    case 3 :
+                        if (noms[0] === noms[0].toLowerCase() ||
+                            noms[1] === noms[1].toLowerCase() ||
+                            noms[2] === noms[2].toLowerCase()){
+                            noms[0] =noms[0].toUpperCase();
+                            noms[1] =noms[1].toUpperCase();
+                            noms[2] =noms[2].toUpperCase();
+                            valor.push(`${noms[0]} ${noms[1]} ${noms[2]}`);
+                        }
+                        valor.push(`${noms[1]} ${noms[2]} ${noms[0]}`);
+                        break;
+                    case 4 :
+                        if (noms[0] === noms[0].toLowerCase() ||
+                            noms[1] === noms[1].toLowerCase() ||
+                            noms[2] === noms[2].toLowerCase() ||
+                            noms[3] === noms[3].toLowerCase()){
+                            noms[0] =noms[0].toUpperCase();
+                            noms[1] =noms[1].toUpperCase();
+                            noms[2] =noms[2].toUpperCase();
+                            noms[3] =noms[3].toUpperCase();
+                            valor.push(`${noms[0]} ${noms[1]} ${noms[2]} ${noms[3]}`);
+                        }
+                        valor.push(`${noms[2]} ${noms[3]} ${noms[0]} ${noms[1]}`);
                 }
             }
             console.log(valor);
@@ -87,7 +123,7 @@ function where_construct(ListValor, indice){
         for(let i=0;i<valor.length;i++)
             valorcomillas=valorcomillas+"'"+valor[i]+"',";
         valorcomillas = valorcomillas.slice(0,-1);
-        where = indice+" IN ("+valorcomillas+")";
+        where = where + indice+" IN ("+valorcomillas+")";
     }else
         where = 'true';
     return where;
@@ -97,6 +133,7 @@ function getAll(req, res, next){
 }
 function getComplet (req, res, next) {
     let jsonR = req.body;
+    console.log(jsonR);
     let ListNames = jsonR.nombre;
     let ListConcepts = jsonR.id_concepto;
     let Listvoucher = jsonR.voucher;
