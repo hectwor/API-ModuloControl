@@ -71,43 +71,56 @@ function when_construct(ListIndices, ListValor) {
 function where_construct(ListValor, indice){
     let where = "";
     if (ListValor != null) {
-        let valor = ListValor.split(',');
-        for(let i=0;i<valor.length;i++) valor[i]=valor[i].trim();
+        let valores = ListValor.split(',');
+        for(let i=0;i<valores.length;i++) valores[i]=valores[i].trim();
         if (indice===indice_name){
-            let tam= valor.length;
+            let tam= valores.length;
             for (let i=0;i<tam;i++){
-                let noms = valor[i].split(' ');
+                let noms = valores[i].split(' ');
                 switch (noms.length) {
                     case 1 :
-                        noms[0] =noms[0].toUpperCase();
-                        where =indice+" SIMILAR TO '%"+noms[0]+"%'";
+                        where="( ";
+                        for(let i=0;i<valores.length;i++){
+                            let noms = valores[i].split(' ');
+                            noms[0] =noms[0].toUpperCase();
+                            where =where+indice+" SIMILAR TO '%"+noms[0]+"%' OR ";
+                        }
+                        where = where.slice(0,-3);
+                        where=where+")";
                         return where;
                     case 2 :
-                        noms[0] =noms[0].toUpperCase();
-                        noms[1] =noms[1].toUpperCase();
-                        where ="("+indice+" SIMILAR TO '%"+noms[0]+"%"+noms[1]+"%' OR " +indice+
-                            " SIMILAR TO '%"+noms[1]+"%"+noms[0]+"%')";
+
+                        where="( ";
+                        for(let i=0;i<valores.length;i++){
+                            let noms = valores[i].split(' ');
+                            noms[0] =noms[0].toUpperCase();
+                            noms[1] =noms[1].toUpperCase();
+                            where = where+indice+" SIMILAR TO '%"+noms[0]+"%"+noms[1]+"%' OR " +indice+
+                                " SIMILAR TO '%"+noms[1]+"%"+noms[0]+"%' OR ";
+                        }
+                        where = where.slice(0,-3);
+                        where=where+")";
                         return where;
                     case 3 :
                         noms[0] =noms[0].toUpperCase();
                         noms[1] =noms[1].toUpperCase();
                         noms[2] =noms[2].toUpperCase();
-                        valor.push(`${noms[0]} ${noms[1]} ${noms[2]}`);
-                        valor.push(`${noms[1]} ${noms[2]} ${noms[0]}`);
+                        valores.push(`${noms[0]} ${noms[1]} ${noms[2]}`);
+                        valores.push(`${noms[1]} ${noms[2]} ${noms[0]}`);
                         break;
                     case 4 :
                         noms[0] =noms[0].toUpperCase();
                         noms[1] =noms[1].toUpperCase();
                         noms[2] =noms[2].toUpperCase();
                         noms[3] =noms[3].toUpperCase();
-                        valor.push(`${noms[0]} ${noms[1]} ${noms[2]} ${noms[3]}`);
-                        valor.push(`${noms[2]} ${noms[3]} ${noms[0]} ${noms[1]}`);
+                        valores.push(`${noms[0]} ${noms[1]} ${noms[2]} ${noms[3]}`);
+                        valores.push(`${noms[2]} ${noms[3]} ${noms[0]} ${noms[1]}`);
                 }
             }
             console.log(valor);
         }
         let valorcomillas="";
-        for(let i=0;i<valor.length;i++)
+        for(let i=0;i<valores.length;i++)
             valorcomillas=valorcomillas+"'"+valor[i]+"',";
         valorcomillas = valorcomillas.slice(0,-1);
         where = where + indice+" IN ("+valorcomillas+")";
