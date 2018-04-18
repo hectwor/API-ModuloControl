@@ -100,7 +100,9 @@ function where_construct(ListValor, indice){
                             let noms = valores[i].split(' ');
                             noms[0] =noms[0].toUpperCase();
                             if (noms.length===2) {
-
+                                noms[1] =noms[1].toUpperCase();
+                                where = where+indice+" SIMILAR TO '%"+noms[0]+"%"+noms[1]+"%' OR " +indice+
+                                    " SIMILAR TO '%"+noms[1]+"%"+noms[0]+"%' OR ";
                             }else
                                 where =where+indice+" SIMILAR TO '%"+noms[0]+"%' OR ";
                         }
