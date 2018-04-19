@@ -15,15 +15,11 @@ const indice_codigo = 'al|umno.codigo';
 function SelectQuery(req, res, next, whereIN){
     let where = "WHERE "+whereIN;
     if (whereIN === "") where = "";
-    console.log("SELECT *, alumno.codigo as Codigo, alumno.ape_nom as Nombre, alumno.dni as DNI, concepto.concepto as Concepto " +
-        "from recaudaciones " +
-        "INNER JOIN alumno ON recaudaciones.id_alum = alumno.id_alum " +
-        "JOIN concepto ON recaudaciones.id_concepto = concepto.id_concepto " +
-        where);
     db.any("SELECT *, alumno.codigo as Codigo, alumno.ape_nom as Nombre, alumno.dni as DNI, concepto.concepto as Concepto " +
         "from recaudaciones " +
         "INNER JOIN alumno ON recaudaciones.id_alum = alumno.id_alum " +
         "JOIN concepto ON recaudaciones.id_concepto = concepto.id_concepto " +
+        "JOIN tipo_concepto ON concepto.concepto = tipo_concepto.concepto " +
         where)
         .then(function(data){
             res.status(200)
@@ -83,7 +79,6 @@ function where_construct(ListValor, indice){
                         for(let i=0;i<valores.length;i++){
                             let noms = valores[i].split(' ');
                             noms[0] =noms[0].toUpperCase();
-                            console.log(noms);
                             if (noms.length===2){
                                 noms[1] =noms[1].toUpperCase();
                                 where = where+indice+" SIMILAR TO '%"+noms[0]+"%"+noms[1]+"%' OR " +indice+
@@ -125,7 +120,6 @@ function where_construct(ListValor, indice){
                         valores.push(`${noms[2]} ${noms[3]} ${noms[0]} ${noms[1]}`);
                 }
             }
-            console.log(valores);
         }
         let valorcomillas="";
         for(let i=0;i<valores.length;i++)
@@ -142,7 +136,6 @@ function getAll(req, res, next){
 function getComplet (req, res, next) {
     let jsonR = req.body;
     let whereperiod;
-    console.log(jsonR);
     let ListNames = jsonR.nombre;
     let ListConcepts = jsonR.id_concepto;
     let Listvoucher = jsonR.voucher;
@@ -165,7 +158,8 @@ function getComplet (req, res, next) {
         +whereperiod+" AND "
         +where_construct(Listvoucher, indice_voucher)+" AND "
         +where_construct(ListConcepts, indice_concepto)+" AND "
-        +"("+where_construct(ListDNI,indice_dni)+" OR "+where_construct(ListDNI, indice_codigo)+")";
+        +"("+where_construct(ListDNI,indice_dni)+" OR "+where_construct(ListDNI, indice_codigo)+") " +
+        "AND tipo_concepto.clase = 2";
 
     SelectQuery(req, res, next, where);
 }
