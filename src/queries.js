@@ -10,7 +10,7 @@ const indice_recaudacion = 'id_rec';
 const indice_flag = 'validado';
 const indice_dni = 'alumno.dni';
 const indice_obs = 'observacion';
-const indice_codigo = 'alumno.codigo';
+const indice_codigo = 'al|umno.codigo';
 
 function SelectQuery(req, res, next, whereIN){
     let where = "WHERE "+whereIN;
@@ -125,11 +125,11 @@ function where_construct(ListValor, indice){
                         valores.push(`${noms[2]} ${noms[3]} ${noms[0]} ${noms[1]}`);
                 }
             }
-            console.log(valor);
+            console.log(valores);
         }
         let valorcomillas="";
         for(let i=0;i<valores.length;i++)
-            valorcomillas=valorcomillas+"'"+valor[i]+"',";
+            valorcomillas=valorcomillas+"'"+valores[i]+"',";
         valorcomillas = valorcomillas.slice(0,-1);
         where = where + indice+" IN ("+valorcomillas+")";
     }else
