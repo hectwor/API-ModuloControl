@@ -4,11 +4,11 @@ const indice_name = 'alumno.ape_nom';
 const indice_concepto = 'concepto.concepto';
 const indice_voucher = 'numero';
 const indice_fecha = 'fecha';
-const indice_recaudacion = 'id_rec';
+const indice_recaudacion = "id_rec";
 const indice_flag = 'validado';
 const indice_dni = 'alumno.dni';
 const indice_obs = 'observacion';
-const indice_codigo = 'al|umno.codigo';
+const indice_codigo = 'alumno.codigo';
 
 function when_construct(ListIndices, ListValor) {
     let when = "", when2 = "";
@@ -137,7 +137,7 @@ function validate(req, res, next){
     indices = indices.slice(1); valores = valores.slice(1);
     if (indices != null && valores!=null) {
         let v = when_construct(indices, valores);
-        q.UpdateQuery(req,res,next,indice_flag,v[0] , v[1],indices);
+        q.UpdateQuery(req,res,next,v[0] , v[1],indices);
     }
 }
 

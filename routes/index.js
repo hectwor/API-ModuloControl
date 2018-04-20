@@ -1,7 +1,7 @@
 let express = require('express');
 let bodyParser = require('body-parser');
 let router = express.Router();
-let db= require('../src/algoritms');
+let algrmts= require('../src/algoritms');
 
 router.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
@@ -15,12 +15,12 @@ router.get('/', function(req, res, next) {
   res.render('index', { title: 'WebAPI Recaudaciones' });
 });
 /*  GET Recaudaciones Totales */
-router.get('/recaudaciones', db.getAll);
+router.get('/recaudaciones', algrmts.getAll);
 
 /*  POST Recaudacion detallada*/
-router.post('/recaudaciones/detallada/', db.getComplet);
+router.post('/recaudaciones/detallada/', algrmts.getComplet);
 
 /*  POST Editar Recaudacion*/
-router.post('/recaudaciones/id/', db.validate);
+router.post('/recaudaciones/id/', algrmts.validate);
 
 module.exports = router;

@@ -1,5 +1,4 @@
 let cn = require('../src/dbconnection');
-let ind = require('../src/algoritms');
 let db = cn.connection;
 
 function SelectQuery(req, res, next, whereIN){
@@ -23,7 +22,8 @@ function SelectQuery(req, res, next, whereIN){
             return next(err);
         })
 }
-function UpdateQuery(req, res, next, indiceSet, when1, when2, indices) {
+function UpdateQuery(req, res, next, when1, when2, indices) {
+    let ind = require('../src/algoritms');
     db.any(`UPDATE recaudaciones SET ${ind.i_flag} = CASE ${ind.i_recaudacion} 
         ${when1}, ${ind.i_obs} = CASE ${ind.i_recaudacion} ${when2}
          WHERE ${ind.i_recaudacion} IN (${indices})`)
