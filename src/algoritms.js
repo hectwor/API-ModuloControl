@@ -120,7 +120,7 @@ function getComplet (req, res, next) {
         +where_construct(Listvoucher, indice_voucher)+" AND "
         +where_construct(ListConcepts, indice_concepto)+" AND "
         +"("+where_construct(ListDNI,indice_dni)+" OR "+where_construct(ListDNI, indice_codigo)+") " +
-        "AND tipo_concepto.id_clase_pagos = 2";
+        "AND clase_pagos.id_clase_pagos IN (select id_clase_pagos from configuracion where estado = 'S')";
 
     q.SelectQuery(req, res, next, where);
 }
