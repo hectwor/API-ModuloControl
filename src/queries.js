@@ -4,12 +4,13 @@ let db = cn.connection;
 function SelectQuery(req, res, next, whereIN){
     let where = "WHERE "+whereIN;
     if (whereIN === "") where = "";
-    db.any("SELECT *, alumno.codigo as Codigo, alumno.ape_nom as Nombre, alumno.dni as DNI, concepto.concepto as Concepto " +
+    db.any("SELECT *, alumno.codigo as Codigo, alumno.ape_nom as Nombre, alumno.dni as DNI, concepto.concepto as Concepto, ubicacion.id as Ubic " +
         "from recaudaciones " +
         "INNER JOIN alumno ON recaudaciones.id_alum = alumno.id_alum " +
         "JOIN concepto ON recaudaciones.id_concepto = concepto.id_concepto " +
         "JOIN tipo_concepto ON concepto.concepto = tipo_concepto.concepto " +
         "JOIN clase_pagos ON tipo_concepto.id_clase_pagos = clase_pagos.id_clase_pagos " +
+        "JOIN ubicacion ON recaudaciones.id_ubicacion = ubicacion.id " +
         where)
         .then(function(data){
             res.status(200)
