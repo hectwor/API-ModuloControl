@@ -23,10 +23,11 @@ function SelectQuery(req, res, next, whereIN){
             return next(err);
         })
 }
-function UpdateQuery(req, res, next, when1, when2, indices) {
+function UpdateQuery(req, res, next, when1, when2, when3, indices) {
     let ind = require('../src/algoritms');
     db.any(`UPDATE recaudaciones SET ${ind.i_flag} = CASE ${ind.i_recaudacion} 
-        ${when1}, ${ind.i_obs} = CASE ${ind.i_recaudacion} ${when2}
+        ${when1}, ${ind.i_obs} = CASE ${ind.i_recaudacion} ${when2},
+        ${ind.i_ubic} = CASE ${ind.i_recaudacion} ${when3}
          WHERE ${ind.i_recaudacion} IN (${indices})`)
         .then(function(data){
             res.status(200)

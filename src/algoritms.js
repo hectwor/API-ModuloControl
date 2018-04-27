@@ -9,6 +9,7 @@ const indice_flag = 'validado';
 const indice_dni = 'alumno.dni';
 const indice_obs = 'observacion';
 const indice_codigo = 'alumno.codigo';
+const indice_ubic = 'id_ubicacion';
 
 function when_construct(ListIndices, ListValor) {
     let when = "", when2 = "";
@@ -128,16 +129,19 @@ function validate(req, res, next){
     let jsonR = req.body;
     let indices="";
     let valores="";
+    let ubic ="";
     for (let i in jsonR){
         if (jsonR.hasOwnProperty(i)) {
             indices = indices +','+jsonR[i].id_rec;
             valores = valores+','+jsonR[i].obs;
+            ubic = ubic + ','+jsonR[i].ubic;
         }
     }
-    indices = indices.slice(1); valores = valores.slice(1);
-    if (indices != null && valores!=null) {
+    indices = indices.slice(1); valores = valores.slice(1); ubic = ubic.slice(1);
+    if (indices != null && valores!=null && ubic!=null) {
         let v = when_construct(indices, valores);
-        q.UpdateQuery(req,res,next,v[0] , v[1],indices);
+        let v2 = when_construct(indices, ubic);
+        q.UpdateQuery(req,res,next,v[0] , v[1], v2[0] ,indices);
     }
 }
 
@@ -154,5 +158,6 @@ module.exports = {
     i_flag:indice_flag,
     i_dni:indice_dni,
     i_obs:indice_obs,
-    i_codigo:indice_codigo
+    i_codigo:indice_codigo,
+    i_ubic:indice_ubic
 };
