@@ -8,8 +8,7 @@ function SelectQuery(req, res, next, whereIN){
         "from recaudaciones " +
         "INNER JOIN alumno ON recaudaciones.id_alum = alumno.id_alum " +
         "JOIN concepto ON recaudaciones.id_concepto = concepto.id_concepto " +
-        "JOIN tipo_concepto ON concepto.concepto = tipo_concepto.concepto " +
-        "JOIN clase_pagos ON tipo_concepto.id_clase_pagos = clase_pagos.id_clase_pagos " +
+        "JOIN clase_pagos ON concepto.id_clase_pagos = clase_pagos.id_clase_pagos " +
         where)
         .then(function(data){
             res.status(200)
