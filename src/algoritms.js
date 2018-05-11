@@ -17,7 +17,7 @@ function when_construct(ListIndices, ListValor) {
     let indices = ListIndices.split(',');
     if (ListIndices != null && ListValor != null) {
         for(let i=0;i<valores.length;i++){
-            let v = valores[i].split('-');
+            let v = valores[i].split('¬');
             when = when + "WHEN "+indices[i]+" THEN "+v[0]+" ";
             when2 = when2 + "WHEN "+indices[i]+" THEN '"+v[1]+"' ";
         }
