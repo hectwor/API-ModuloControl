@@ -138,9 +138,6 @@ function validate(req, res, next){
         }
     }
     indices = indices.slice(1); check = check.slice(1); obs = obs.slice(1); ubic = ubic.slice(1);
-    console.log(indices);
-    console.log(obs);
-    console.log(check);
     if (indices != null && check!=null && obs!=null && ubic!=null) {
         let v = when_construct(indices, check);
         let v2 = when_construct(indices, obs, indice_obs);
@@ -149,9 +146,18 @@ function validate(req, res, next){
     }
 }
 function insertNewCollection(req, res, next){
-
-
-    q.InsertQuery(req, res, next);
+    let jsonR = req.body;
+     let va="";
+    for (let i in jsonR){
+        if (jsonR.hasOwnProperty(i)) {
+            va = va + "('"+jsonR[i].id_alum+"',"+
+            "'"+jsonR[i].id_concepto+"', '"+jsonR[i].id_ubicacion+"','"+jsonR[i].id_registro+"','${valores.codigo}',"+
+                "'"+jsonR[i].numero+"','"+jsonR[i].importe+"','"+jsonR[i].observacion+"','"+jsonR[i].fecha+"',"+
+                jsonR[i].validado+",'"+jsonR[i].tipo+"'),";
+        }
+    }
+    va = va.slice(-1);
+    q.InsertQuery(req, res, next, va);
 }
 module.exports = {
     getAll: getAll,
