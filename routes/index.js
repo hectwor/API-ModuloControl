@@ -23,4 +23,7 @@ router.post('/recaudaciones/detallada/', algrmts.getComplet);
 /*  POST Editar Recaudacion*/
 router.post('/recaudaciones/id/', algrmts.validate);
 
+/*  POST Añadir Recaudacion*/
+router.post('/recaudaciones/new/', algrmts.insertNewCollection);
+
 module.exports = router;

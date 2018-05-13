@@ -11,18 +11,16 @@ const indice_obs = 'observacion';
 const indice_codigo = 'alumno.codigo';
 const indice_ubic = 'id_ubicacion';
 
-function when_construct(ListIndices, ListValor) {
-    let when = "", when2 = "";
-    let valores = ListValor.split(',');
+function when_construct(ListIndices, ListValor, tipo) {
+    let when = "";
+    let valores = ListValor.split('¬');
     let indices = ListIndices.split(',');
     if (ListIndices != null && ListValor != null) {
         for(let i=0;i<valores.length;i++){
-            let v = valores[i].split('¬');
-            when = when + "WHEN "+indices[i]+" THEN "+v[0]+" ";
-            when2 = when2 + "WHEN "+indices[i]+" THEN '"+v[1]+"' ";
+            if (tipo===indice_obs) valores[i]= "'"+valores[i]+"'";
+            when = when + "WHEN "+indices[i]+" THEN "+valores[i]+" ";
         }
-        when = when+"END";when2 = when2+"END";
-        when = [when, when2];
+        when = when+"END";
     }
     return when;
 }
@@ -128,27 +126,38 @@ function getComplet (req, res, next) {
 function validate(req, res, next){
     let jsonR = req.body;
     let indices="";
-    let valores="";
+    let check="";
+    let obs="";
     let ubic ="";
     for (let i in jsonR){
         if (jsonR.hasOwnProperty(i)) {
             indices = indices +','+jsonR[i].id_rec;
-            valores = valores+','+jsonR[i].obs;
-            ubic = ubic + ','+jsonR[i].ubic;
+            check = check+'¬'+jsonR[i].check;
+            obs = obs  + '¬'+jsonR[i].obs;
+            ubic = ubic + '¬'+jsonR[i].ubic;
         }
     }
-    indices = indices.slice(1); valores = valores.slice(1); ubic = ubic.slice(1);
-    if (indices != null && valores!=null && ubic!=null) {
-        let v = when_construct(indices, valores);
-        let v2 = when_construct(indices, ubic);
-        q.UpdateQuery(req,res,next,v[0] , v[1], v2[0] ,indices);
+    indices = indices.slice(1); check = check.slice(1); obs = obs.slice(1); ubic = ubic.slice(1);
+    console.log(indices);
+    console.log(obs);
+    console.log(check);
+    if (indices != null && check!=null && obs!=null && ubic!=null) {
+        let v = when_construct(indices, check);
+        let v2 = when_construct(indices, obs, indice_obs);
+        let v3 = when_construct(indices, ubic);
+        q.UpdateQuery(req,res,next,v , v2, v3,indices);
     }
 }
+function insertNewCollection(req, res, next){
 
+
+    q.InsertQuery(req, res, next);
+}
 module.exports = {
     getAll: getAll,
     getComplet:getComplet,
     validate: validate,
+    insertNewCollection:insertNewCollection,
 
     i_name:indice_name,
     i_concepto:indice_concepto,
