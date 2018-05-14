@@ -151,12 +151,12 @@ function insertNewCollection(req, res, next){
     for (let i in jsonR){
         if (jsonR.hasOwnProperty(i)) {
             va = va + "('"+jsonR[i].id_alum+"',"+
-            "'"+jsonR[i].id_concepto+"', '"+jsonR[i].id_ubicacion+"','"+jsonR[i].id_registro+"','${valores.codigo}',"+
+            "'"+jsonR[i].id_concepto+"', '"+jsonR[i].id_ubicacion+"','1764','"+jsonR[i].codigo+"',"+
                 "'"+jsonR[i].numero+"','"+jsonR[i].importe+"','"+jsonR[i].observacion+"','"+jsonR[i].fecha+"',"+
                 jsonR[i].validado+",'"+jsonR[i].tipo+"'),";
         }
     }
-    va = va.slice(-1);
+    va = va.slice(0,-1);
     q.InsertQuery(req, res, next, va);
 }
 module.exports = {
