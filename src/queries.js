@@ -9,7 +9,8 @@ function SelectQuery(req, res, next, whereIN){
         "INNER JOIN alumno ON recaudaciones.id_alum = alumno.id_alum " +
         "JOIN concepto ON recaudaciones.id_concepto = concepto.id_concepto " +
         "JOIN clase_pagos ON concepto.id_clase_pagos = clase_pagos.id_clase_pagos " +
-        where;
+        where+
+        "ORDER BY alumno.codigo DESC, fecha DESC";
     db.any(query)
         .then(function(data){
             res.status(200)
