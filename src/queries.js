@@ -45,7 +45,8 @@ function UpdateQuery(req, res, next, when1, when2, when3, indices) {
 }
 
 function InsertQuery(req, res, next, valores){
-    let query=`insert into recaudaciones(id_alum, id_concepto, id_ubicacion, id_registro, cod_alumno, numero, importe, observacion, fecha, validado, id_tipo)
+    let query=`insert into recaudaciones
+    (id_alum, id_concepto, id_ubicacion, id_registro, cod_alumno, numero, importe, observacion, fecha, validado, id_tipo)
         values ${valores}`;
     console.log(query);
     db.any(query)
