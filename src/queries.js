@@ -1,7 +1,7 @@
 let cn = require('../src/dbconnection');
 let db = cn.connection;
 
-function SelectQuery(req, res, next, whereIN){
+function SelectCollection(req, res, next, whereIN){
     let where = "WHERE "+whereIN;
     if (whereIN === "") where = "";
     let query = "SELECT *, alumno.codigo as Codigo, alumno.ape_nom as Nombre, alumno.dni as DNI, concepto.concepto as Concepto " +
@@ -11,6 +11,24 @@ function SelectQuery(req, res, next, whereIN){
         "JOIN clase_pagos ON concepto.id_clase_pagos = clase_pagos.id_clase_pagos " +
         where+
         "ORDER BY alumno.codigo DESC, fecha DESC";
+    db.any(query)
+        .then(function(data){
+            res.status(200)
+                .json({
+                    status : 'success',
+                    data:data,
+                    message : 'Retrieved List'
+                });
+        })
+        .catch(function(err){
+            return next(err);
+        })
+}
+function SelectGeneral(req, res, next, table){
+    let query = "Select * from "+table;
+    if (table === "concepto")
+        query = query +" JOIN clase_pagos ON concepto.id_clase_pagos = clase_pagos.id_clase_pagos "+
+        "where clase_pagos.id_clase_pagos = 2";
     db.any(query)
         .then(function(data){
             res.status(200)
@@ -64,7 +82,8 @@ function InsertQuery(req, res, next, valores){
 }
 
 module.exports = {
-    SelectQuery:SelectQuery,
+    SelectGeneral:SelectGeneral,
+    SelectCollection:SelectCollection,
     UpdateQuery:UpdateQuery,
     InsertQuery:InsertQuery
 };

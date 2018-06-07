@@ -91,7 +91,7 @@ function where_construct(ListValor, indice){
     return where;
 }
 function getAll(req, res, next){
-    q.SelectQuery(req, res, next, "");
+    q.SelectCollection(req, res, next, "");
 }
 function getComplet (req, res, next) {
     let jsonR = req.body;
@@ -121,7 +121,7 @@ function getComplet (req, res, next) {
         +"("+where_construct(ListDNI,indice_dni)+" OR "+where_construct(ListDNI, indice_codigo)+") " +
         "AND clase_pagos.id_clase_pagos IN (select id_clase_pagos from configuracion where estado = 'S')";
 
-    q.SelectQuery(req, res, next, where);
+    q.SelectCollection(req, res, next, where);
 }
 function validate(req, res, next){
     let jsonR = req.body;
@@ -153,12 +153,15 @@ function insertNewCollection(req, res, next){
                 jsonR.validado+",'"+jsonR.tipo+"')";
     q.InsertQuery(req, res, next, va);
 }
+function getAllConcepts(req, res, next){
+    q.SelectGeneral(req,  res, next, "concepto");
+}
 module.exports = {
     getAll: getAll,
     getComplet:getComplet,
     validate: validate,
     insertNewCollection:insertNewCollection,
-
+    getAllConcepts: getAllConcepts,
     i_name:indice_name,
     i_concepto:indice_concepto,
     i_voucher:indice_voucher,
