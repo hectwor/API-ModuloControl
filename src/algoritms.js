@@ -147,10 +147,10 @@ function validate(req, res, next){
 }
 function insertNewCollection(req, res, next){
     let jsonR = req.body;
-     let va = "('"+jsonR[i].id_alum+"',"+
-            "'"+jsonR[i].id_concepto+"', '"+jsonR[i].id_ubicacion+"','1764','"+jsonR[i].cod_alumno+"',"+
-                "'"+jsonR[i].numero+"','"+jsonR[i].importe+"','"+jsonR[i].observacion+"','"+jsonR[i].fecha+"',"+
-                jsonR[i].validado+",'"+jsonR[i].id_tipo+"')";
+     let va = "('"+jsonR.id_alum+"',"+
+            "'"+jsonR.id_concepto+"', '"+jsonR.id_ubicacion+"','"+jsonR.cod_alumno+"',"+
+                "'"+jsonR.numero+"','"+jsonR.importe+"','"+jsonR.observacion+"','"+jsonR.fecha+"',"+
+                jsonR.validado+",'"+jsonR.tipo+"')";
     q.InsertQuery(req, res, next, va);
 }
 module.exports = {
