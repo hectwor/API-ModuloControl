@@ -11,6 +11,7 @@ function SelectCollection(req, res, next, whereIN){
         "JOIN clase_pagos ON concepto.id_clase_pagos = clase_pagos.id_clase_pagos " +
         where+
         "ORDER BY alumno.codigo DESC, fecha DESC";
+    console.log(query);
     db.any(query)
         .then(function(data){
             res.status(200)
@@ -29,6 +30,7 @@ function SelectGeneral(req, res, next, table){
     if (table === "concepto")
         query = query +" JOIN clase_pagos ON concepto.id_clase_pagos = clase_pagos.id_clase_pagos "+
         "where clase_pagos.id_clase_pagos = 2";
+
     db.any(query)
         .then(function(data){
             res.status(200)
