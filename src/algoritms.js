@@ -65,12 +65,12 @@ function where_construct(ListValor, indice){
                         where=where+")";
                         return where;
                     case 3 :
-                        noms[0] =noms[0].toUpperCase();
-                        noms[1] =noms[1].toUpperCase();
-                        noms[2] =noms[2].toUpperCase();
                         where="( ";
                         for(let i=0;i<valores.length;i++){
                             let noms = valores[i].split(' ');
+                            noms[0] =noms[0].toUpperCase();
+                            noms[1] =noms[1].toUpperCase();
+                            noms[2] =noms[2].toUpperCase();
                             where = where+indice+" SIMILAR TO '%"+noms[0]+"%"+noms[1]+"%"+noms[2]+"%' OR " +indice+
                                 " SIMILAR TO '%"+noms[1]+"%"+noms[2]+"%"+noms[0]+"%' OR ";
                         }
