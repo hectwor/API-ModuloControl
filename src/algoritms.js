@@ -117,8 +117,13 @@ function getComplet (req, res, next) {
     if (jsonR.periodoF === null ||jsonR.periodoF === "") FPeriod = "'"+hoy.getFullYear()+'-'+hoy.getMonth()+'-'+hoy.getDate()+"'";
     if ((jsonR.periodoI === null ||jsonR.periodoI === "") && (jsonR.periodoF === null ||jsonR.periodoF === ""))
         whereperiod='true';
-    else
-        whereperiod = "("+indice_fecha+" < "+FPeriod+" AND " + indice_fecha + " >= "+ IPeriod +")";
+    else{
+        if (jsonR.periodoF === jsonR.periodoI) {
+            FPeriod = sumarDias(new Date(IPeriod), 1);
+            whereperiod = "("+indice_fecha+" < '"+FPeriod.toDateString()+"' AND " + indice_fecha + " >= "+ IPeriod +")";
+        }else
+            whereperiod = "("+indice_fecha+" < "+FPeriod+" AND " + indice_fecha + " >= "+ IPeriod +")";
+    }
 
     let where = where_construct(ListNames, indice_name)+" AND "
         +whereperiod+" AND "
@@ -161,6 +166,10 @@ function insertNewCollection(req, res, next){
 }
 function getAllConcepts(req, res, next){
     q.SelectGeneral(req,  res, next, "concepto");
+}
+function sumarDias(fecha, dias){
+    fecha.setDate(fecha.getDate() + dias);
+    return fecha;
 }
 module.exports = {
     getAll: getAll,
