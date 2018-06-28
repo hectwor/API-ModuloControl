@@ -167,6 +167,12 @@ function insertNewCollection(req, res, next){
 function getAllConcepts(req, res, next){
     q.SelectGeneral(req,  res, next, "concepto");
 }
+function getAllTypes(req, res, next) {
+    q.SelectGeneral(req,  res, next, "tipo");
+}
+function getAllUbications(req, res, next) {
+    q.SelectGeneral(req,  res, next, "ubicacion");
+}
 function sumarDias(fecha, dias){
     fecha.setDate(fecha.getDate() + dias);
     return fecha;
@@ -177,6 +183,8 @@ module.exports = {
     validate: validate,
     insertNewCollection:insertNewCollection,
     getAllConcepts: getAllConcepts,
+    getAllTypes:getAllTypes,
+    getAllUbications:getAllUbications,
     i_name:indice_name,
     i_concepto:indice_concepto,
     i_voucher:indice_voucher,

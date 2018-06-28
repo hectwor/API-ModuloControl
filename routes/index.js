@@ -29,4 +29,10 @@ router.post('/recaudaciones/new/', algrmts.insertNewCollection);
 /* GET Listar Conceptos */
 router.get('/conceptos', algrmts.getAllConcepts);
 
+/* GET Listar Tipos */
+router.get('/tipos', algrmts.getAllTypes);
+
+/* GET Listar Ubicaciones */
+router.get('/ubicaciones', algrmts.getAllUbications);
+
 module.exports = router;
