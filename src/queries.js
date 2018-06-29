@@ -5,12 +5,14 @@ function SelectCollection(req, res, next, whereIN){
     let where = "WHERE "+whereIN;
     if (whereIN === "") where = "";
     let query = "SELECT *, " +
-        "CASE" +
-        "  WHEN(select a.cod_alumno from alumno_alumno_programa a where a.id_alum = alumno.id_alum) != alumno.codigo\n" +
-        "    THEN  (select a.cod_alumno from alumno_alumno_programa a where a.id_alum = alumno.id_alum)\n" +
-        "  WHEN NOT EXISTS(select a.cod_alumno from alumno_alumno_programa a where a.id_alum = alumno.id_alum)\n" +
-        "    THEN alumno.codigo" +
-        "  END as codigo, alumno.ape_nom as Nombre, alumno.dni as DNI, concepto.concepto as Concepto " +
+        "CASE "+
+    "WHEN(select a.cod_alumno from alumno_alumno_programa a where a.id_alum = alumno.id_alum) != alumno.codigo "+
+    "THEN  (select a.cod_alumno from alumno_alumno_programa a where a.id_alum = alumno.id_alum) "+
+    "WHEN NOT EXISTS(select a.cod_alumno from alumno_alumno_programa a where a.id_alum = alumno.id_alum) "+
+    "THEN alumno.codigo "+
+    "WHEN (select a.cod_alumno from alumno_alumno_programa a where a.id_alum = alumno.id_alum) = alumno.codigo "+
+    "THEN  (select a.cod_alumno from alumno_alumno_programa a where a.id_alum = alumno.id_alum) "+
+    "END as codigo, alumno.ape_nom as Nombre, alumno.dni as DNI, concepto.concepto as Concepto " +
         "from recaudaciones " +
         "INNER JOIN alumno ON recaudaciones.id_alum = alumno.id_alum " +
         "JOIN concepto ON recaudaciones.id_concepto = concepto.id_concepto " +
